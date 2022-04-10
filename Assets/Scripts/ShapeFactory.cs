@@ -9,7 +9,9 @@ namespace ObjectManagementExample
 
         public Shape GetShape(int shapeId)
         {
-            return Instantiate(prefabs[shapeId]);
+            var instance = Instantiate(prefabs[shapeId]);
+            instance.ShapeId = shapeId;
+            return instance;
         }
 
         public Shape GetRandomShape()
