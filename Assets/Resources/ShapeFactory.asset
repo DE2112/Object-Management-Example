@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1fd5a47a5b48fcaffa44e1d0f67862, type: 3}
   m_Name: ShapeFactory
   m_EditorClassIdentifier: 
-  prefabs:
+  _prefabs:
   - {fileID: 2514487003122978059, guid: fc20f1950a5035444a0d6d9b4955e393, type: 3}
   - {fileID: 7798634604677003124, guid: c56e03a38f0dca148b5b59c3becd2254, type: 3}
   - {fileID: -8342023130490980388, guid: ffae8fae7eab0c74d8c9b1a264342583, type: 3}
+  _materials:
+  - {fileID: 2100000, guid: 8ea3a7788581687439510c1e526b17c4, type: 2}
+  - {fileID: 2100000, guid: 2d66e83aaa418e94fb4c28953bf80f2f, type: 2}
+  - {fileID: 2100000, guid: 9584c2de97205e2499f10d0b4cf1f557, type: 2}
