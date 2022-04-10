@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _storage: {fileID: 422801402}
-  _objectPrefab: {fileID: -3028419205231560777, guid: fc20f1950a5035444a0d6d9b4955e393, type: 3}
+  _objectPrefab: {fileID: 2514487003122978059, guid: fc20f1950a5035444a0d6d9b4955e393, type: 3}
   _spawnSphereRadius: 3.5
   _persistableObjects: []
   _spawnKey: 113
