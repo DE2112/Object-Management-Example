@@ -6,10 +6,13 @@ namespace ObjectManagementExample
     public class GameDataReader
     {
         private BinaryReader _reader;
+        private int _version;
+        public int Version => _version;
 
-        public GameDataReader(BinaryReader reader)
+        public GameDataReader(BinaryReader reader, int version)
         {
             _reader = reader;
+            _version = version;
         }
 
         public int ReadInt()
@@ -38,6 +41,16 @@ namespace ObjectManagementExample
             value.x = _reader.ReadSingle();
             value.y = _reader.ReadSingle();
             value.z = _reader.ReadSingle();
+            return value;
+        }
+
+        public Color ReadColor()
+        {
+            Color value;
+            value.r = _reader.ReadSingle();
+            value.g = _reader.ReadSingle();
+            value.b = _reader.ReadSingle();
+            value.a = _reader.ReadSingle();
             return value;
         }
     }

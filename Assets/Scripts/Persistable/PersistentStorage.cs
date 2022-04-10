@@ -12,10 +12,11 @@ namespace ObjectManagementExample
             _saveFilePath = Path.Combine(Application.persistentDataPath, "saveFile");
         }
 
-        public void Save(PersistableObject persistableObject)
+        public void Save(PersistableObject persistableObject, int version)
         {
             using (var writer = new BinaryWriter(File.Open(_saveFilePath, FileMode.Create)))
             {
+                writer.Write(-version);
                 persistableObject.Save(new GameDataWriter(writer));
             }
         }
@@ -24,7 +25,7 @@ namespace ObjectManagementExample
         {
             using (var reader = new BinaryReader(File.Open(_saveFilePath, FileMode.Open)))
             {
-                persistableObject.Load(new GameDataReader(reader));
+                persistableObject.Load(new GameDataReader(reader, -reader.ReadInt32()));
             }
         }
     }

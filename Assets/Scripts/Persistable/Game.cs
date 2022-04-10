@@ -48,7 +48,7 @@ namespace ObjectManagementExample
             }
             else if (Input.GetKeyDown(_saveKey))
             {
-                _storage.Save(this);
+                _storage.Save(this, SAVE_FILE_VERSION);
             }
             else if (Input.GetKeyDown(_loadKey))
             {
@@ -64,7 +64,7 @@ namespace ObjectManagementExample
             instanceTransform.localPosition = Random.insideUnitSphere * _spawnSphereRadius;
             instanceTransform.localRotation = Random.rotation;
             instanceTransform.localScale = Vector3.one * Random.Range(MIN_SIZE, MAX_SIZE);
-
+            instance.SetColor(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
             _shapes.Add(instance);
         }
 
@@ -80,8 +80,6 @@ namespace ObjectManagementExample
 
         public override void Save(GameDataWriter writer)
         {
-            writer.Write(-SAVE_FILE_VERSION);
-            
             writer.Write(_shapes.Count);
             foreach (var instance in _shapes)
             {
@@ -93,7 +91,7 @@ namespace ObjectManagementExample
 
         public override void Load(GameDataReader reader)
         {
-            var version = -reader.ReadInt();
+            var version = reader.Version;
 
             if (version > SAVE_FILE_VERSION)
             {
