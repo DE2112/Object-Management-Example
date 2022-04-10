@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using ObjectManagementExample;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,9 +12,9 @@ public class Game : PersistableObject
     private const float MAX_SIZE = 1f;
 
     [SerializeField] private PersistentStorage _storage;
-    [SerializeField] private PersistableObject _objectPrefab;
+    [SerializeField] private ShapeFactory _shapeFactory;
     [SerializeField] private float _spawnSphereRadius;
-    [SerializeField] private List<PersistableObject> _persistableObjects;
+    [SerializeField] private List<Shape> _instances;
 
     [Header("Keys")]
     [SerializeField] private KeyCode _spawnKey;
@@ -23,7 +24,7 @@ public class Game : PersistableObject
     
     private void Awake()
     {
-        _persistableObjects = new List<PersistableObject>();
+        _instances = new List<Shape>();
     }
 
     private void OnDrawGizmos()
@@ -60,28 +61,28 @@ public class Game : PersistableObject
     
     private void SpawnObjects()
     {
-        var persistableObject = Instantiate(_objectPrefab);
-        var objectTransform = persistableObject.transform;
-        objectTransform.localPosition = Random.insideUnitSphere * _spawnSphereRadius;
-        objectTransform.localRotation = Random.rotation;
-        objectTransform.localScale = Vector3.one * Random.Range(MIN_SIZE, MAX_SIZE);
+        var instance = _shapeFactory.GetRandomShape();
+        var instanceTransform = instance.transform;
+        instanceTransform.localPosition = Random.insideUnitSphere * _spawnSphereRadius;
+        instanceTransform.localRotation = Random.rotation;
+        instanceTransform.localScale = Vector3.one * Random.Range(MIN_SIZE, MAX_SIZE);
         
-        _persistableObjects.Add(persistableObject);
+        _instances.Add(instance);
     }
 
     private void Reset()
     {
-        foreach (var persistableObject in _persistableObjects)
+        foreach (var instance in _instances)
         {
-            Destroy(persistableObject.gameObject);
+            Destroy(instance.gameObject);
         }
-        _persistableObjects.Clear();
+        _instances.Clear();
     }
 
     public override void Save(GameDataWriter writer)
     {
-        writer.Write(_persistableObjects.Count);
-        foreach (var persistableObject in _persistableObjects)
+        writer.Write(_instances.Count);
+        foreach (var persistableObject in _instances)
         {
             persistableObject.Save(writer);
         }
@@ -92,9 +93,9 @@ public class Game : PersistableObject
         var count = reader.ReadInt();
         for (int i = 0; i < count; i++)
         {
-            var persistableObject = Instantiate(_objectPrefab);
-            persistableObject.Load(reader);
-            _persistableObjects.Add(persistableObject);
+            var instance = _shapeFactory.GetShape(0);
+            instance.Load(reader);
+            _instances.Add(instance);
         }
     }
 }
