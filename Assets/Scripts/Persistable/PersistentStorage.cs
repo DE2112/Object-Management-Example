@@ -1,28 +1,31 @@
 using System.IO;
 using UnityEngine;
 
-public class PersistentStorage : MonoBehaviour 
+namespace ObjectManagementExample
 {
-    private string _saveFilePath;
-    
-    private void Awake ()
+    public class PersistentStorage : MonoBehaviour
     {
-        _saveFilePath = Path.Combine(Application.persistentDataPath, "saveFile");
-    }
+        private string _saveFilePath;
 
-    public void Save(PersistableObject persistableObject)
-    {
-        using (var writer = new BinaryWriter(File.Open(_saveFilePath, FileMode.Create)))
+        private void Awake()
         {
-            persistableObject.Save(new GameDataWriter(writer));
+            _saveFilePath = Path.Combine(Application.persistentDataPath, "saveFile");
         }
-    }
 
-    public void Load(PersistableObject persistableObject)
-    {
-        using (var reader = new BinaryReader(File.Open(_saveFilePath, FileMode.Open)))
+        public void Save(PersistableObject persistableObject)
         {
-            persistableObject.Load(new GameDataReader(reader));
+            using (var writer = new BinaryWriter(File.Open(_saveFilePath, FileMode.Create)))
+            {
+                persistableObject.Save(new GameDataWriter(writer));
+            }
+        }
+
+        public void Load(PersistableObject persistableObject)
+        {
+            using (var reader = new BinaryReader(File.Open(_saveFilePath, FileMode.Open)))
+            {
+                persistableObject.Load(new GameDataReader(reader));
+            }
         }
     }
 }
