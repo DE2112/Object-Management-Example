@@ -86,6 +86,7 @@ namespace ObjectManagementExample
             foreach (var instance in _shapes)
             {
                 writer.Write(instance.ShapeId);
+                writer.Write(instance.MaterialId);
                 instance.Save(writer);
             }
         }
@@ -103,7 +104,8 @@ namespace ObjectManagementExample
             for (int i = 0; i < count; i++)
             {
                 var shapeId = version > 0 ? reader.ReadInt() : 0;
-                var instance = _shapeFactory.GetShape(shapeId);
+                var materialId = version > 0 ? reader.ReadInt() : 0;
+                var instance = _shapeFactory.GetShape(shapeId, materialId);
                 instance.Load(reader);
                 _shapes.Add(instance);
             }
