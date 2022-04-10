@@ -246,8 +246,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectPrefab: {fileID: 2776067161520753328, guid: fc20f1950a5035444a0d6d9b4955e393, type: 3}
-  _spawnKey: 113
   _spawnSphereRadius: 3.5
+  _objectTransforms: []
+  _spawnKey: 113
+  _reloadKey: 101
 --- !u!4 &837528595
 Transform:
   m_ObjectHideFlags: 0
