@@ -9,11 +9,15 @@ namespace ObjectManagementExample
         private const float MIN_SIZE = 0.1f;
         private const float MAX_SIZE = 1f;
         private const int SAVE_FILE_VERSION = 1;
+        private const float SPAWN_PERIOD = 1f;
+        private const float DESTRUCTION_PERIOD = 1f;
 
         [SerializeField] private PersistentStorage _storage;
         [SerializeField] private ShapeFactory _shapeFactory;
         [SerializeField] private float _spawnSphereRadius;
         [SerializeField] private List<Shape> _shapes;
+        private float _spawnSpeed, _destructionSpeed;
+        private float _spawnTimer, _destructionTimer;
 
         [Header("Keys")]
         [SerializeField] private KeyCode _spawnKey;
@@ -22,6 +26,18 @@ namespace ObjectManagementExample
         [SerializeField] private KeyCode _loadKey;
         [SerializeField] private KeyCode _destroyKey;
 
+        public float SpawnSpeed
+        {
+            get => _spawnSpeed;
+            set => _spawnSpeed = value;
+        }
+
+        public float DestructionSpeed
+        {
+            get => _destructionSpeed;
+            set => _destructionSpeed = value;
+        }
+        
         private void Awake()
         {
             _shapes = new List<Shape>();
@@ -36,13 +52,27 @@ namespace ObjectManagementExample
         private void Update()
         {
             ProcessInput();
+
+            _spawnTimer += Time.deltaTime * _spawnSpeed;
+            while (_spawnTimer >= SPAWN_PERIOD)
+            {
+                _spawnTimer -= SPAWN_PERIOD;
+                CreateRandomShape();
+            }
+            
+            _destructionTimer += Time.deltaTime * _destructionSpeed;
+            while (_destructionTimer >= DESTRUCTION_PERIOD)
+            {
+                _destructionTimer -= DESTRUCTION_PERIOD;
+                DestroyRandomShape();
+            }
         }
 
         private void ProcessInput()
         {
             if (Input.GetKeyDown(_spawnKey))
             {
-                CreateShape();
+                CreateRandomShape();
             }
             else if (Input.GetKeyDown(_destroyKey))
             {
@@ -63,7 +93,7 @@ namespace ObjectManagementExample
             }
         }
 
-        private void CreateShape()
+        private void CreateRandomShape()
         {
             var instance = _shapeFactory.GetRandomShape();
             var instanceTransform = instance.transform;
