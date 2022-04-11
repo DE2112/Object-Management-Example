@@ -109,7 +109,7 @@ namespace ObjectManagementExample
             if (_shapes.Count > 0)
             {
                 var index = Random.Range(0, _shapes.Count);
-                Destroy(_shapes[index].gameObject);
+                _shapeFactory.ReclaimShape(_shapes[index]);
                 var lastIndex = _shapes.Count - 1;
                 _shapes[index] = _shapes[lastIndex];
                 _shapes.RemoveAt(lastIndex);
@@ -120,7 +120,7 @@ namespace ObjectManagementExample
         {
             foreach (var instance in _shapes)
             {
-                Destroy(instance.gameObject);
+                _shapeFactory.ReclaimShape(instance);
             }
 
             _shapes.Clear();
