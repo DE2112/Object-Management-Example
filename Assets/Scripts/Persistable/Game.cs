@@ -15,10 +15,12 @@ namespace ObjectManagementExample
         [SerializeField] private float _spawnSphereRadius;
         [SerializeField] private List<Shape> _shapes;
 
-        [Header("Keys")] [SerializeField] private KeyCode _spawnKey;
+        [Header("Keys")]
+        [SerializeField] private KeyCode _spawnKey;
         [SerializeField] private KeyCode _resetKey;
         [SerializeField] private KeyCode _saveKey;
         [SerializeField] private KeyCode _loadKey;
+        [SerializeField] private KeyCode _destroyKey;
 
         private void Awake()
         {
@@ -40,7 +42,11 @@ namespace ObjectManagementExample
         {
             if (Input.GetKeyDown(_spawnKey))
             {
-                SpawnObjects();
+                CreateShape();
+            }
+            else if (Input.GetKeyDown(_destroyKey))
+            {
+                DestroyRandomShape();
             }
             else if (Input.GetKeyDown(_resetKey))
             {
@@ -57,7 +63,7 @@ namespace ObjectManagementExample
             }
         }
 
-        private void SpawnObjects()
+        private void CreateShape()
         {
             var instance = _shapeFactory.GetRandomShape();
             var instanceTransform = instance.transform;
@@ -66,6 +72,18 @@ namespace ObjectManagementExample
             instanceTransform.localScale = Vector3.one * Random.Range(MIN_SIZE, MAX_SIZE);
             instance.SetColor(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
             _shapes.Add(instance);
+        }
+
+        private void DestroyRandomShape()
+        {
+            if (_shapes.Count > 0)
+            {
+                var index = Random.Range(0, _shapes.Count);
+                Destroy(_shapes[index].gameObject);
+                var lastIndex = _shapes.Count - 1;
+                _shapes[index] = _shapes[lastIndex];
+                _shapes.RemoveAt(lastIndex);
+            }
         }
 
         private void Reset()
