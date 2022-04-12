@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ObjectManagementExample
 {
@@ -10,6 +11,7 @@ namespace ObjectManagementExample
         [SerializeField] private Material[] _materials;
         [SerializeField] private bool _recycle;
         private List<Shape>[] _pools;
+        private Scene _poolScene;
 
         public Shape GetShape(int shapeId, int materialId)
         {
@@ -33,6 +35,7 @@ namespace ObjectManagementExample
                 {
                     instance = Instantiate(_prefabs[shapeId]);
                     instance.ShapeId = shapeId;
+                    SceneManager.MoveGameObjectToScene(instance.gameObject, _poolScene);
                 }
             }
             else
@@ -57,6 +60,26 @@ namespace ObjectManagementExample
             {
                 _pools[i] = new List<Shape>();
             }
+
+            if (Application.isEditor)
+            {
+                _poolScene = SceneManager.GetSceneByName(name);
+                if (_poolScene.isLoaded)
+                {
+                    var rootObjects = _poolScene.GetRootGameObjects();
+                    foreach (var rootObject in rootObjects)
+                    {
+                        var pooledShape = rootObject.GetComponent<Shape>();
+                        if (!pooledShape.gameObject.activeSelf)
+                        {
+                            _pools[pooledShape.ShapeId].Add(pooledShape);
+                        }
+                    }
+                    return;
+                }
+            }
+            
+            _poolScene = SceneManager.CreateScene(name);
         }
 
         public void ReclaimShape(Shape shape)
