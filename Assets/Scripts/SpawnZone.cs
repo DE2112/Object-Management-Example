@@ -6,11 +6,18 @@ namespace ObjectManagementExample
 {
     public class SpawnZone : MonoBehaviour
     {
-        [SerializeField] private float _spawnRadius;
+        [SerializeField] private bool _surfaceOnly;
+        
+        private void OnDrawGizmos ()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawWireSphere(Vector3.zero, 1f);
+        }
 
         public Vector3 GetSpawnPoint()
         {
-            return transform.TransformPoint(Random.insideUnitSphere * _spawnRadius);
+            return transform.TransformPoint(_surfaceOnly ? Random.onUnitSphere : Random.insideUnitSphere);
         }
     }
 }
