@@ -10,7 +10,7 @@ namespace ObjectManagementExample
     {
         private const float MIN_SIZE = 0.1f;
         private const float MAX_SIZE = 1f;
-        private const int SAVE_FILE_VERSION = 1;
+        private const int SAVE_FILE_VERSION = 2;
         private const float SPAWN_PERIOD = 1f;
         private const float DESTRUCTION_PERIOD = 1f;
 
@@ -173,6 +173,7 @@ namespace ObjectManagementExample
         public override void Save(GameDataWriter writer)
         {
             writer.Write(_shapes.Count);
+            writer.Write(_loadedLevelBuildIndex);
             foreach (var instance in _shapes)
             {
                 writer.Write(instance.ShapeId);
@@ -191,6 +192,7 @@ namespace ObjectManagementExample
             }
             
             var count = version <= 0 ? -version : reader.ReadInt();
+            StartCoroutine(LoadLevel(version < 2 ? 1 : reader.ReadInt()));
             for (int i = 0; i < count; i++)
             {
                 var shapeId = version > 0 ? reader.ReadInt() : 0;
