@@ -16,12 +16,12 @@ namespace ObjectManagementExample
 
         [SerializeField] private PersistentStorage _storage;
         [SerializeField] private ShapeFactory _shapeFactory;
-        [SerializeField] private float _spawnSphereRadius;
         [SerializeField] private List<Shape> _shapes;
         private float _spawnSpeed, _destructionSpeed;
         private float _spawnTimer, _destructionTimer;
         [SerializeField] private int _levelCount;
         private int _loadedLevelBuildIndex;
+        [SerializeField] private SpawnZone _spawnZone;
 
         [Header("Keys")]
         [SerializeField] private KeyCode _spawnKey;
@@ -60,12 +60,6 @@ namespace ObjectManagementExample
                 }
             }
             StartCoroutine(LoadLevel(1));
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawSphere(transform.position, _spawnSphereRadius);
-            Gizmos.color = Color.red;
         }
 
         private void Update()
@@ -141,7 +135,7 @@ namespace ObjectManagementExample
         {
             var instance = _shapeFactory.GetRandomShape();
             var instanceTransform = instance.transform;
-            instanceTransform.localPosition = Random.insideUnitSphere * _spawnSphereRadius;
+            instanceTransform.localPosition = _spawnZone.GetSpawnPoint();
             instanceTransform.localRotation = Random.rotation;
             instanceTransform.localScale = Vector3.one * Random.Range(MIN_SIZE, MAX_SIZE);
             instance.SetColor(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
