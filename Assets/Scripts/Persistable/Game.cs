@@ -20,6 +20,8 @@ namespace ObjectManagementExample
         [SerializeField] private List<Shape> _shapes;
         private float _spawnSpeed, _destructionSpeed;
         private float _spawnTimer, _destructionTimer;
+        [SerializeField] private int _levelCount;
+        private int _loadedLevelBuildIndex;
 
         [Header("Keys")]
         [SerializeField] private KeyCode _spawnKey;
@@ -46,14 +48,18 @@ namespace ObjectManagementExample
 
             if (Application.isEditor)
             {
-                var loadedLevel = SceneManager.GetSceneByName("Level 1");
-                if (loadedLevel.isLoaded)
+                for (int i = 0; i < SceneManager.sceneCount; i++)
                 {
-                    SceneManager.SetActiveScene(loadedLevel);
-                    return;
+                    var loadedScene = SceneManager.GetSceneAt(i);
+                    if (loadedScene.name.Contains("Level "))
+                    {
+                        SceneManager.SetActiveScene(loadedScene);
+                        _loadedLevelBuildIndex = loadedScene.buildIndex;
+                        return;
+                    }
                 }
             }
-            StartCoroutine(LoadLevel());
+            StartCoroutine(LoadLevel(1));
         }
 
         private void OnDrawGizmos()
@@ -104,13 +110,30 @@ namespace ObjectManagementExample
                 Reset();
                 _storage.Load(this);
             }
+            else
+            {
+                for (int i = 1; i <= _levelCount; i++)
+                {
+                    if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+                    {
+                        Reset();
+                        StartCoroutine(LoadLevel(i));
+                        return;
+                    }
+                }
+            }
         }
 
-        private IEnumerator LoadLevel()
+        private IEnumerator LoadLevel(int levelBuildIndex)
         {
             enabled = false;
-            yield return SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
-            SceneManager.SetActiveScene(SceneManager.GetSceneByName("Level 1"));
+            if (_loadedLevelBuildIndex > 0)
+            {
+                yield return SceneManager.UnloadSceneAsync(_loadedLevelBuildIndex);
+            }
+            yield return SceneManager.LoadSceneAsync(levelBuildIndex, LoadSceneMode.Additive);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(levelBuildIndex));
+            _loadedLevelBuildIndex = levelBuildIndex;
             enabled = true;
         }
 
