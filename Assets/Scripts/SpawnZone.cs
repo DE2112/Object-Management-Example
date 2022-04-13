@@ -8,7 +8,7 @@ namespace ObjectManagementExample
     {
         [SerializeField] private bool _surfaceOnly;
         
-        private void OnDrawGizmos ()
+        private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
             Gizmos.matrix = transform.localToWorldMatrix;

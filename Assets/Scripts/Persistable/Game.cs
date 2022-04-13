@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,8 @@ namespace ObjectManagementExample
         private const float SPAWN_PERIOD = 1f;
         private const float DESTRUCTION_PERIOD = 1f;
 
+        private static Game _instance;
+        
         [SerializeField] private PersistentStorage _storage;
         [SerializeField] private ShapeFactory _shapeFactory;
         [SerializeField] private List<Shape> _shapes;
@@ -21,7 +24,7 @@ namespace ObjectManagementExample
         private float _spawnTimer, _destructionTimer;
         [SerializeField] private int _levelCount;
         private int _loadedLevelBuildIndex;
-        [SerializeField] private SpawnZone _spawnZone;
+        [SerializeField] private SpawnZone _spawnZoneOfLevel;
 
         [Header("Keys")]
         [SerializeField] private KeyCode _spawnKey;
@@ -30,6 +33,12 @@ namespace ObjectManagementExample
         [SerializeField] private KeyCode _loadKey;
         [SerializeField] private KeyCode _destroyKey;
 
+        public static Game Instance
+        {
+            get => _instance;
+            set => _instance = value;
+        }
+        
         public float SpawnSpeed
         {
             get => _spawnSpeed;
@@ -41,7 +50,18 @@ namespace ObjectManagementExample
             get => _destructionSpeed;
             set => _destructionSpeed = value;
         }
-        
+
+        public SpawnZone SpawnZoneOfLevel
+        {
+            get => _spawnZoneOfLevel;
+            set => _spawnZoneOfLevel = value;
+        }
+
+        private void OnEnable()
+        {
+            _instance = this;
+        }
+
         private void Start()
         {
             _shapes = new List<Shape>();
@@ -135,7 +155,7 @@ namespace ObjectManagementExample
         {
             var instance = _shapeFactory.GetRandomShape();
             var instanceTransform = instance.transform;
-            instanceTransform.localPosition = _spawnZone.GetSpawnPoint();
+            instanceTransform.localPosition = _spawnZoneOfLevel.GetSpawnPoint();
             instanceTransform.localRotation = Random.rotation;
             instanceTransform.localScale = Vector3.one * Random.Range(MIN_SIZE, MAX_SIZE);
             instance.SetColor(Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
