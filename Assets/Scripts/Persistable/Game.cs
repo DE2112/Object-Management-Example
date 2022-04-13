@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace ObjectManagementExample
@@ -38,9 +40,20 @@ namespace ObjectManagementExample
             set => _destructionSpeed = value;
         }
         
-        private void Awake()
+        private void Start()
         {
             _shapes = new List<Shape>();
+
+            if (Application.isEditor)
+            {
+                var loadedLevel = SceneManager.GetSceneByName("Level 1");
+                if (loadedLevel.isLoaded)
+                {
+                    SceneManager.SetActiveScene(loadedLevel);
+                    return;
+                }
+            }
+            StartCoroutine(LoadLevel());
         }
 
         private void OnDrawGizmos()
@@ -91,6 +104,14 @@ namespace ObjectManagementExample
                 Reset();
                 _storage.Load(this);
             }
+        }
+
+        private IEnumerator LoadLevel()
+        {
+            enabled = false;
+            yield return SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName("Level 1"));
+            enabled = true;
         }
 
         private void CreateRandomShape()
