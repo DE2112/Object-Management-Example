@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000002, guid: edb8303247cc042409ee4e628d7a367e, type: 2}
+  m_LightingDataAsset: {fileID: 112000002, guid: 2dc5a794625ffd742920fc3afee68edf, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -631,7 +631,7 @@ MonoBehaviour:
   _storage: {fileID: 422801402}
   _shapeFactory: {fileID: 11400000, guid: 45050896507bd36408dbfd7a471a2f74, type: 2}
   _shapes: []
-  _levelCount: 2
+  _levelCount: 3
   _spawnZoneOfLevel: {fileID: 0}
   _spawnKey: 113
   _resetKey: 101

@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ObjectManagementExample
 {
-    public class SpawnZone : MonoBehaviour
+    public class SphereSpawnZone : SpawnZone
     {
         [SerializeField] private bool _surfaceOnly;
         
@@ -14,8 +12,8 @@ namespace ObjectManagementExample
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.DrawWireSphere(Vector3.zero, 1f);
         }
-
-        public Vector3 GetSpawnPoint()
+        
+        public override Vector3 GetSpawnPoint()
         {
             return transform.TransformPoint(_surfaceOnly ? Random.onUnitSphere : Random.insideUnitSphere);
         }
