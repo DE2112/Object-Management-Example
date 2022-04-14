@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace ObjectManagementExample
@@ -19,7 +20,7 @@ namespace ObjectManagementExample
         [SerializeField] private ShapeFactory _shapeFactory;
         [SerializeField] private List<Shape> _shapes;
         private float _spawnSpeed, _destructionSpeed;
-        private float _spawnTimer, _destructionTimer;
+        private float _spawnProgress, _destructionProgress;
         [SerializeField] private int _levelCount;
         private int _loadedLevelBuildIndex;
         private Random.State _mainRandomState;
@@ -31,6 +32,10 @@ namespace ObjectManagementExample
         [SerializeField] private KeyCode _saveKey;
         [SerializeField] private KeyCode _loadKey;
         [SerializeField] private KeyCode _destroyKey;
+
+        [Header("UI")]
+        [SerializeField] private Slider _spawnSpeedSlider;
+        [SerializeField] private Slider _destructionSpeedSlider;
 
         public float SpawnSpeed
         {
@@ -70,18 +75,21 @@ namespace ObjectManagementExample
         private void Update()
         {
             ProcessInput();
+        }
 
-            _spawnTimer += Time.deltaTime * _spawnSpeed;
-            while (_spawnTimer >= SPAWN_PERIOD)
+        private void FixedUpdate()
+        {
+            _spawnProgress += Time.deltaTime * _spawnSpeed;
+            while (_spawnProgress >= SPAWN_PERIOD)
             {
-                _spawnTimer -= SPAWN_PERIOD;
+                _spawnProgress -= SPAWN_PERIOD;
                 CreateRandomShape();
             }
             
-            _destructionTimer += Time.deltaTime * _destructionSpeed;
-            while (_destructionTimer >= DESTRUCTION_PERIOD)
+            _destructionProgress += Time.deltaTime * _destructionSpeed;
+            while (_destructionProgress >= DESTRUCTION_PERIOD)
             {
-                _destructionTimer -= DESTRUCTION_PERIOD;
+                _destructionProgress -= DESTRUCTION_PERIOD;
                 DestroyRandomShape();
             }
         }
@@ -165,6 +173,8 @@ namespace ObjectManagementExample
             Random.state = _mainRandomState;
             var seed = Random.Range(0, int.MaxValue) ^ (int)Time.unscaledTime;
             Random.InitState(seed);
+            _spawnSpeedSlider.value = _spawnSpeed = 0f;
+            _destructionSpeedSlider.value = _destructionSpeed = 0f;
             
             foreach (var instance in _shapes)
             {
@@ -178,6 +188,10 @@ namespace ObjectManagementExample
         {
             writer.Write(_shapes.Count);
             writer.Write(Random.state);
+            writer.Write(_spawnSpeed);
+            writer.Write(_spawnProgress);
+            writer.Write(_destructionSpeed);
+            writer.Write(_destructionProgress);
             writer.Write(_loadedLevelBuildIndex);
             GameLevel.Current.Save(writer);
             
@@ -212,6 +226,11 @@ namespace ObjectManagementExample
                 {
                     Random.state = state;
                 }
+
+                _spawnSpeedSlider.value = _spawnSpeed = reader.ReadFloat();
+                _spawnProgress = reader.ReadFloat();
+                _destructionSpeedSlider.value = _destructionSpeed = reader.ReadFloat();
+                _destructionProgress = reader.ReadFloat();
             }
             
             yield return LoadLevel(version < 2 ? 1 : reader.ReadInt());
