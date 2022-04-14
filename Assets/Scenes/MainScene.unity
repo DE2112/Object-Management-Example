@@ -638,6 +638,8 @@ MonoBehaviour:
   _saveKey: 115
   _loadKey: 102
   _destroyKey: 100
+  _spawnSpeedSlider: {fileID: 458108610}
+  _destructionSpeedSlider: {fileID: 1546352316}
 --- !u!4 &837528595
 Transform:
   m_ObjectHideFlags: 0

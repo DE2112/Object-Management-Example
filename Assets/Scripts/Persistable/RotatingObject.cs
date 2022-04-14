@@ -7,7 +7,7 @@ namespace ObjectManagementExample
     {
         [SerializeField] private Vector3 _angularVelocity;
 
-        private void Update()
+        private void FixedUpdate()
         {
             transform.Rotate(_angularVelocity * Time.deltaTime);
         }
