@@ -11,7 +11,7 @@ namespace ObjectManagementExample
     {
         private const float MIN_SIZE = 0.1f;
         private const float MAX_SIZE = 1f;
-        private const int SAVE_FILE_VERSION = 2;
+        private const int SAVE_FILE_VERSION = 3;
         private const float SPAWN_PERIOD = 1f;
         private const float DESTRUCTION_PERIOD = 1f;
 
@@ -25,6 +25,8 @@ namespace ObjectManagementExample
         [SerializeField] private int _levelCount;
         private int _loadedLevelBuildIndex;
         [SerializeField] private SpawnZone _spawnZoneOfLevel;
+        private Random.State _mainRandomState;
+        [SerializeField] private bool _reseedOnBool;
 
         [Header("Keys")]
         [SerializeField] private KeyCode _spawnKey;
@@ -64,6 +66,7 @@ namespace ObjectManagementExample
 
         private void Start()
         {
+            _mainRandomState = Random.state;
             _shapes = new List<Shape>();
 
             if (Application.isEditor)
@@ -79,6 +82,8 @@ namespace ObjectManagementExample
                     }
                 }
             }
+            
+            Reset();
             StartCoroutine(LoadLevel(1));
         }
 
@@ -176,6 +181,10 @@ namespace ObjectManagementExample
 
         private void Reset()
         {
+            Random.state = _mainRandomState;
+            var seed = Random.Range(0, int.MaxValue) ^ (int)Time.unscaledTime;
+            Random.InitState(seed);
+            
             foreach (var instance in _shapes)
             {
                 _shapeFactory.ReclaimShape(instance);
@@ -187,6 +196,7 @@ namespace ObjectManagementExample
         public override void Save(GameDataWriter writer)
         {
             writer.Write(_shapes.Count);
+            writer.Write(Random.state);
             writer.Write(_loadedLevelBuildIndex);
             foreach (var instance in _shapes)
             {
@@ -206,6 +216,16 @@ namespace ObjectManagementExample
             }
             
             var count = version <= 0 ? -version : reader.ReadInt();
+
+            if (version >= 3)
+            {
+                var state = reader.ReadRandomState();
+                if (!_reseedOnBool)
+                {
+                    Random.state = state;
+                }
+            }
+            
             StartCoroutine(LoadLevel(version < 2 ? 1 : reader.ReadInt()));
             for (int i = 0; i < count; i++)
             {

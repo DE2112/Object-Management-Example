@@ -53,5 +53,10 @@ namespace ObjectManagementExample
             value.a = _reader.ReadSingle();
             return value;
         }
+
+        public Random.State ReadRandomState()
+        {
+            return JsonUtility.FromJson<Random.State>(_reader.ReadString());
+        }
     }
 }
