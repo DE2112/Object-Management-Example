@@ -23,10 +23,9 @@ namespace ObjectManagementExample
 
         public void Load(PersistableObject persistableObject)
         {
-            using (var reader = new BinaryReader(File.Open(_saveFilePath, FileMode.Open)))
-            {
-                persistableObject.Load(new GameDataReader(reader, -reader.ReadInt32()));
-            }
+            var data = File.ReadAllBytes(_saveFilePath);
+            var reader = new BinaryReader(new MemoryStream(data));
+            persistableObject.Load(new GameDataReader(reader, -reader.ReadInt32()));
         }
     }
 }
