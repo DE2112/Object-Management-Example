@@ -99,6 +99,7 @@ namespace ObjectManagementExample
             else if (Input.GetKeyDown(_resetKey))
             {
                 Reset();
+                StartCoroutine(LoadLevel(_loadedLevelBuildIndex));
             }
             else if (Input.GetKeyDown(_saveKey))
             {
